@@ -9,7 +9,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 let checks = 0;
 function check(name, fn) { fn(); checks += 1; console.log('✓ ' + name); }
 // The supplied specification quotes forbidden examples. Repository/tool metadata is not site content.
-const excluded = new Set(['BRIEF.md', 'BRIEF3.md', '.git', '.agents', '.codex', '.claude', 'agents']);
+const excluded = new Set(['BRIEF.md', 'BRIEF3.md', 'BRIEF4.md', '.git', '.agents', '.codex', '.claude', 'agents']);
 function files(dir = '') {
   return fs.readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap(entry => {
     if (excluded.has(entry.name) || entry.isSymbolicLink()) return [];
@@ -149,6 +149,27 @@ check('Static source audit: no network APIs, external resources, real brands or 
     if (file.endsWith('.css')) assert(!/@import|url\(\s*['"]?(?:\/\/|[a-z]+:)/i.test(content));
   }
 });
+check('Font sizes never fall below 12px, including responsive rules', () => {
+  const css = read('assets/css/market.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  const sizes = Array.from(css.matchAll(/font-size\s*:\s*([^;}]+)/g), match => match[1].trim());
+  assert(sizes.length > 0);
+  for (const size of sizes) {
+    // All current sizes use pixels, or clamp with a pixel minimum and maximum.
+    assert(/^(?:[\d.]+px|clamp\([\d.]+px,\s*[\d.]+vw,\s*[\d.]+px\))$/.test(size), 'Review font-size units: ' + size);
+    for (const match of size.matchAll(/([\d.]+)px/g)) assert(Number(match[1]) >= 12, 'Small font-size: ' + size);
+  }
+});
+check('Every product keeps one copy panel between its price and condition', () => {
+  for (const file of htmlFiles.slice(1)) {
+    const html = read(file);
+    assert.strictEqual((html.match(/data-copy>/g) || []).length, 1);
+    const price = html.indexOf('class="item-price"');
+    const copy = html.indexOf('class="copy-panel"');
+    const condition = html.indexOf('class="condition-block"');
+    assert(price < copy && copy < condition, file);
+    assert(/class="item-summary">[\s\S]*?class="item-price"[\s\S]*?class="copy-panel"/.test(html));
+  }
+});
 check('Both dark selectors have identical tokens; text contrast is at least 4.5:1', () => {
   const css = read('assets/css/market.css');
   const blocks = Array.from(css.matchAll(/:root[^{}]*\{([^}]+)\}/g), match => match[1]);
@@ -261,6 +282,8 @@ async function asyncChecks() {
   await success.copy.fire('click');
   assert.strictEqual(success.copied(), success.url.value);
   assert.strictEqual(success.help.textContent, 'コピーしました。体験版の AI出品に貼り付けてください');
+  assert.strictEqual(success.toast.textContent, success.help.textContent);
+  assert(success.toast.classes.has('visible'));
   for (const options of [{ clipboardRejects: true }, { noClipboard: true }]) {
     const fallback = browser(options);
     await fallback.copy.fire('click');

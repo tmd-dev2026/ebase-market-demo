@@ -82,33 +82,33 @@
     },
     {
       id: 'shoulder-bag', slug: 'shoulder-bag', category: 'bag', template: 'デフォルト',
-      name: 'ブランドロゴ入り ショルダーバッグ 黒 レザー(ブランド名は伏せています)',
-      brand: '不明(名前は伏せています)', model: '不明',
-      cost: 48000, sale: 420, weightKg: 0.9, sizeCm: '26 × 18 × 9', listable: false,
-      condition: '中古・使用感あり', conditionNote: '保証書・購入証明なし。真贋は確認できません',
+      name: 'レザー ショルダーバッグ 黒 ノーブランド 金具つき 斜めがけ',
+      brand: 'ノーブランド', model: 'なし',
+      cost: 5800, sale: 89, weightKg: 0.9, sizeCm: '26 × 18 × 9', listable: true,
+      condition: '中古・使用感あり', conditionNote: '角に擦れ、ストラップに小さなひび割れあり。内側はきれい',
       seller: { name: 'seller_demo_03', rating: '評価 96(例)', area: '神奈川県' }, posted: '2026-10-09',
       shipFrom: '神奈川県', shipMethod: '梱包して発送(追跡あり)',
       images: [
         { file: 'shoulder-bag-1.svg', caption: '全体(前面)' },
         { file: 'shoulder-bag-2.svg', caption: '背面' },
-        { file: 'shoulder-bag-3.svg', caption: 'ロゴ金具のアップ' },
+        { file: 'shoulder-bag-3.svg', caption: '金具のアップ' },
         { file: 'shoulder-bag-4.svg', caption: '内側とストラップ' }
       ],
       description: [
-        'ロゴ金具のついた黒のレザーショルダーバッグです。ブランド名は伏せています(デモ用)。',
-        '使用感があります。角に擦れ、ストラップに小さなひび割れがあります。',
-        '保証書・購入時のレシート・ギャランティカードはありません。',
-        '知人から譲り受けたもので、購入元は分かりません(デモ用の設定)。',
-        '※ このページは「出品できない商品」を体験するためのデモ用の架空ページです。'
+        '黒のレザー調ショルダーバッグです。ブランドの表示はないノーブランド品です。',
+        '使用感があります。角に擦れ、ストラップに小さなひび割れがあります。内側はきれいです。',
+        'フラップ式で、内側にファスナーつきのポケットが 1 つあります。',
+        'ストラップは取り外せません。長さの調節ができます。',
+        '※ 写真は実物とは別のデモ用の画像です。'
       ],
-      specs: [['ブランド', '伏せています'], ['種類', 'ショルダーバッグ'], ['素材', 'レザー(と書かれている)'], ['状態', '中古・使用感あり'], ['保証書・購入証明', 'なし'], ['サイズ', '約 26 × 18 × 9 cm'], ['重さ', '約 0.6 kg(梱包後 約 0.9 kg の設定)']],
+      specs: [['ブランド', 'ノーブランド'], ['種類', 'ショルダーバッグ'], ['素材', 'レザー調'], ['色', '黒'], ['状態', '中古・使用感あり'], ['サイズ', '約 26 × 18 × 9 cm'], ['重さ', '約 0.6 kg(梱包後 約 0.9 kg の設定)']],
       ai: {
-        titleEn: 'Luxury Brand Logo Shoulder Bag Black Leather Pre-owned Japan',
+        titleEn: 'Black Faux Leather Shoulder Bag Crossbody Unbranded with Metal Hardware Japan',
         category: 'Clothing, Shoes & Accessories > Women > Women\'s Bags & Handbags',
         conditionEn: 'Pre-owned',
-        descriptionEn: ['Black leather shoulder bag with a logo plate. Pre-owned with signs of use.', 'No proof of purchase or authenticity card available.'],
-        specifics: [['Brand', '(unverified)'], ['Type', 'Shoulder Bag'], ['Color', 'Black'], ['Condition', 'Pre-owned']],
-        warnings: [{ level: '出品不可', text: 'この商品は出せません。真贋を証明できない物は出品できません。' }]
+        descriptionEn: ['Black faux leather flap shoulder bag, unbranded, with metal hardware.', 'Signs of use: corner scuffs and small cracks on the strap. The inside is clean.', 'One inner zip pocket. Adjustable, non-detachable strap.'],
+        specifics: [['Brand', 'Unbranded'], ['Type', 'Shoulder Bag'], ['Color', 'Black'], ['Material', 'Faux Leather'], ['Condition', 'Pre-owned']],
+        warnings: []
       }
     },
     {
@@ -218,7 +218,7 @@
           'Heavy item, will be shipped in a large box (about 4 kg).'
         ],
         specifics: [['Brand', 'Banda'], ['Type', 'Statue'], ['Height', '45 cm'], ['Condition', 'Used - Like New'], ['Country of Origin', 'Japan']],
-        warnings: [{ level: '注意', text: '重さ(梱包後 約 4.1 kg)に対して売値が低めです。利益計算で送料と手残りを必ず確認してください。' }]
+        warnings: []
       }
     }
   ];

@@ -9,7 +9,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 let checks = 0;
 function check(name, fn) { fn(); checks += 1; console.log('✓ ' + name); }
 // The supplied specification quotes forbidden examples. Repository/tool metadata is not site content.
-const excluded = new Set(['BRIEF.md', '.git', '.agents', '.codex', '.claude', 'agents']);
+const excluded = new Set(['BRIEF.md', 'BRIEF3.md', '.git', '.agents', '.codex', '.claude', 'agents']);
 function files(dir = '') {
   return fs.readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap(entry => {
     if (excluded.has(entry.name) || entry.isSymbolicLink()) return [];
@@ -18,6 +18,7 @@ function files(dir = '') {
   });
 }
 const siteFiles = files();
+const retiredWording = [['真', '贋'], ['出品', 'できません'], ['出せ', 'ません'], ['保証書・購入証明', 'がなく']].map(parts => parts.join(''));
 const htmlFiles = ['index.html'].concat(products.map(p => 'items/' + p.slug + '.html'));
 check('6 products, 4 distinct valid self-contained illustrations each', () => {
   assert.strictEqual(products.length, 6);
@@ -105,8 +106,6 @@ check('Product content, exact image captions, URL controls and adjacent links', 
     assert(html.includes('aria-live="polite"'));
     assert(/<input[^>]*data-page-url[^>]*readonly/.test(html));
     assert(/aria-disabled="true" data-purchase/.test(html));
-    assert.strictEqual(html.includes('真贋'), product.listable === false);
-    if (!product.listable) assert(html.includes('この商品は保証書・購入証明がなく、真贋を確認できません(デモ用の設定)'));
     if (i > 0) assert(html.includes('href="' + products[i - 1].slug + '.html"'));
     if (i < products.length - 1) assert(html.includes('href="' + products[i + 1].slug + '.html"'));
   });
@@ -118,6 +117,20 @@ check('Product content, exact image captions, URL controls and adjacent links', 
     position = next;
   });
   assert.strictEqual((index.match(/data-filter=/g) || []).length, 7);
+});
+check('No retired notices in any page or source; listing eligibility does not affect rendering', () => {
+  const builder = require('../scripts/build.js');
+  for (const file of siteFiles) {
+    const content = read(file);
+    retiredWording.forEach(word => assert(!content.includes(word), 'Retired wording in ' + file));
+  }
+  products.forEach((product, i) => {
+    assert.strictEqual(builder.item({ ...product, listable: false }, i), builder.item({ ...product, listable: true }, i));
+    if (product.slug === 'shoulder-bag') {
+      product.images.forEach(image => assert(!read('assets/img/' + image.file).includes('ロゴ')));
+      assert(!read('items/' + product.slug + '.html').includes('ロゴ'));
+    }
+  });
 });
 check('Static source audit: no network APIs, external resources, real brands or income claims', () => {
   const APIs = ['fet' + 'ch', 'XML' + 'HttpRequest', 'Web' + 'Socket', 'send' + 'Beacon'];
@@ -149,7 +162,7 @@ check('Both dark selectors have identical tokens; text contrast is at least 4.5:
   for (const block of [blocks[0], blocks[2]]) {
     const t = tokens(block);
     const pairs = ['bg', 'surface', 'soft', 'hero'].flatMap(bg => ['text', 'muted', 'accent'].map(fg => [fg, bg]));
-    pairs.push(['on-accent', 'accent'], ['on-accent', 'accent-hover'], ['warning', 'warning-bg'], ['banner-text', 'banner']);
+    pairs.push(['on-accent', 'accent'], ['on-accent', 'accent-hover'], ['banner-text', 'banner']);
     for (const [foreground, background] of pairs) {
       const a = luminance(t[foreground]); const b = luminance(t[background]);
       const ratio = (Math.max(a, b) + .05) / (Math.min(a, b) + .05);

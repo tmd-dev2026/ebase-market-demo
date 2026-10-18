@@ -2,7 +2,7 @@
   color-scheme: light;
   --bg: #fcfaf6; --surface: #ffffff; --soft: #f1ebe4; --text: #302a32; --muted: #655d68;
   --accent: #65416b; --accent-hover: #4d2d53; --on-accent: #ffffff; --hero: #eee5ed;
-  --border: #d5cbd3; --warning: #a52336; --warning-bg: #fff0ef; --focus: #185e96;
+  --border: #d5cbd3; --focus: #185e96;
   --banner: #342b39; --banner-text: #fff9f1; --shadow: 0 8px 28px #3222360b;
 }
 @media (prefers-color-scheme: dark) {
@@ -10,7 +10,7 @@
     color-scheme: dark;
     --bg: #1b191e; --surface: #252229; --soft: #312d35; --text: #f5eff5; --muted: #c4b9c8;
     --accent: #dcb7e0; --accent-hover: #edcff0; --on-accent: #2c1931; --hero: #352b39;
-    --border: #5f5364; --warning: #ffb4b9; --warning-bg: #42252e; --focus: #9dd5ff;
+    --border: #5f5364; --focus: #9dd5ff;
     --banner: #100e13; --banner-text: #fff9f1; --shadow: 0 8px 28px #00000020;
   }
 }
@@ -18,7 +18,7 @@
   color-scheme: dark;
   --bg: #1b191e; --surface: #252229; --soft: #312d35; --text: #f5eff5; --muted: #c4b9c8;
   --accent: #dcb7e0; --accent-hover: #edcff0; --on-accent: #2c1931; --hero: #352b39;
-  --border: #5f5364; --warning: #ffb4b9; --warning-bg: #42252e; --focus: #9dd5ff;
+  --border: #5f5364; --focus: #9dd5ff;
   --banner: #100e13; --banner-text: #fff9f1; --shadow: 0 8px 28px #00000020;
 }
 * { box-sizing: border-box; }
@@ -97,7 +97,6 @@ h1, h2 { line-height: 1.45; }
 .copy-panel label { display: block; font-size: 11px; color: var(--muted); margin: 14px 0 5px; }
 .copy-panel input { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); background: var(--surface); font-size: 12px; }
 .copy-panel p:last-child { font-size: 12px; margin-top: 10px; }
-.authenticity-warning { color: var(--warning); background: var(--warning-bg); padding: 16px; border: 1px solid var(--warning); border-radius: 10px; font-size: 14px; margin-top: 24px; }
 .condition-block { margin-top: 26px; }
 .condition-block h2 { font-size: 15px; margin-bottom: 8px; }
 .condition-block > p:last-child { font-size: 13px; margin-top: 5px; }

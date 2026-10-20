@@ -13,10 +13,10 @@
       seller: { name: 'seller_demo_01', rating: '評価 482(例)', area: '東京都' }, posted: '2026-10-12',
       shipFrom: '東京都', shipMethod: '梱包して発送(追跡あり)',
       images: [
-        { file: 'holo-card-1.svg', caption: '全体(表面)' },
-        { file: 'holo-card-2.svg', caption: '裏面' },
-        { file: 'holo-card-3.svg', caption: '縁と角のアップ' },
-        { file: 'holo-card-4.svg', caption: 'スリーブと保護ケース' }
+        { file: 'holo-card-1.jpg', caption: '全体(表面)' },
+        { file: 'holo-card-2.jpg', caption: '裏面' },
+        { file: 'holo-card-3.jpg', caption: '縁と角のアップ' },
+        { file: 'holo-card-4.jpg', caption: 'スリーブと保護ケース' }
       ],
       description: [
         'ホロ加工のレアカードです。購入後すぐスリーブに入れて保管していました。',
@@ -50,10 +50,10 @@
       seller: { name: 'seller_demo_02', rating: '評価 1,205(例)', area: '大阪府' }, posted: '2026-10-10',
       shipFrom: '大阪府', shipMethod: '梱包して発送(追跡・補償あり)',
       images: [
-        { file: 'film-camera-1.svg', caption: '全体(前面)' },
-        { file: 'film-camera-2.svg', caption: '背面とフィルム室' },
-        { file: 'film-camera-3.svg', caption: '上面(ダイヤルとファインダー)' },
-        { file: 'film-camera-4.svg', caption: '付属品(ストラップ・ボディキャップ)' }
+        { file: 'film-camera-1.jpg', caption: '全体(前面)' },
+        { file: 'film-camera-2.jpg', caption: '背面とフィルム室' },
+        { file: 'film-camera-3.jpg', caption: '上面(ダイヤルとファインダー)' },
+        { file: 'film-camera-4.jpg', caption: '付属品(ストラップ・ボディキャップ)' }
       ],
       description: [
         '定番の35mmフィルム一眼レフ(ボディ)です。ブラック。',
@@ -89,10 +89,10 @@
       seller: { name: 'seller_demo_03', rating: '評価 96(例)', area: '神奈川県' }, posted: '2026-10-09',
       shipFrom: '神奈川県', shipMethod: '梱包して発送(追跡あり)',
       images: [
-        { file: 'shoulder-bag-1.svg', caption: '全体(前面)' },
-        { file: 'shoulder-bag-2.svg', caption: '背面' },
-        { file: 'shoulder-bag-3.svg', caption: '金具のアップ' },
-        { file: 'shoulder-bag-4.svg', caption: '内側とストラップ' }
+        { file: 'shoulder-bag-1.jpg', caption: '全体(前面)' },
+        { file: 'shoulder-bag-2.jpg', caption: '背面' },
+        { file: 'shoulder-bag-3.jpg', caption: '金具のアップ' },
+        { file: 'shoulder-bag-4.jpg', caption: '内側とストラップ' }
       ],
       description: [
         '黒のレザー調ショルダーバッグです。ブランドの表示はないノーブランド品です。',
@@ -120,10 +120,10 @@
       seller: { name: 'seller_demo_04', rating: '評価 733(例)', area: '愛知県' }, posted: '2026-10-11',
       shipFrom: '愛知県', shipMethod: '梱包して発送(追跡あり)',
       images: [
-        { file: 'wrist-watch-1.svg', caption: '文字盤(全体)' },
-        { file: 'wrist-watch-2.svg', caption: '裏蓋' },
-        { file: 'wrist-watch-3.svg', caption: '側面とリューズ' },
-        { file: 'wrist-watch-4.svg', caption: 'ベルトとバックル' }
+        { file: 'wrist-watch-1.jpg', caption: '文字盤(全体)' },
+        { file: 'wrist-watch-2.jpg', caption: '裏蓋' },
+        { file: 'wrist-watch-3.jpg', caption: '側面とリューズ' },
+        { file: 'wrist-watch-4.jpg', caption: 'ベルトとバックル' }
       ],
       description: [
         '自動巻きのメンズ腕時計です。シルバー文字盤、日付と曜日表示つき。',
@@ -157,10 +157,10 @@
       seller: { name: 'seller_demo_05', rating: '評価 2,310(例)', area: '福岡県' }, posted: '2026-10-13',
       shipFrom: '福岡県', shipMethod: '梱包して発送(追跡・補償あり)',
       images: [
-        { file: 'fd-lens-1.svg', caption: '全体(側面)' },
-        { file: 'fd-lens-2.svg', caption: '前玉' },
-        { file: 'fd-lens-3.svg', caption: '後玉とマウント部' },
-        { file: 'fd-lens-4.svg', caption: 'キャップ類' }
+        { file: 'fd-lens-1.jpg', caption: '全体(側面)' },
+        { file: 'fd-lens-2.jpg', caption: '前玉' },
+        { file: 'fd-lens-3.jpg', caption: '後玉とマウント部' },
+        { file: 'fd-lens-4.jpg', caption: 'キャップ類' }
       ],
       description: [
         '明るい標準レンズ(50mm F1.4)です。マニュアルフォーカス。',
@@ -194,10 +194,10 @@
       seller: { name: 'seller_demo_06', rating: '評価 311(例)', area: '北海道' }, posted: '2026-10-08',
       shipFrom: '北海道', shipMethod: '梱包して発送(追跡あり)',
       images: [
-        { file: 'figure-large-1.svg', caption: '全体(正面)' },
-        { file: 'figure-large-2.svg', caption: '背面' },
-        { file: 'figure-large-3.svg', caption: '顔のアップ' },
-        { file: 'figure-large-4.svg', caption: '箱(外箱)' }
+        { file: 'figure-large-1.jpg', caption: '全体(正面)' },
+        { file: 'figure-large-2.jpg', caption: '背面' },
+        { file: 'figure-large-3.jpg', caption: '顔のアップ' },
+        { file: 'figure-large-4.jpg', caption: '箱(外箱)' }
       ],
       description: [
         'アニメの戦士をモチーフにした大型スタチュー(約45cm、架空のキャラクターです)。',

@@ -9,7 +9,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 let checks = 0;
 function check(name, fn) { fn(); checks += 1; console.log('✓ ' + name); }
 // The supplied specification quotes forbidden examples. Repository/tool metadata is not site content.
-const excluded = new Set(['BRIEF.md', 'BRIEF3.md', 'BRIEF4.md', '.git', '.agents', '.codex', '.claude', 'agents']);
+const excluded = new Set(['BRIEF.md', 'BRIEF2.md', 'BRIEF3.md', 'BRIEF4.md', 'BRIEF5.md', '.git', '.agents', '.codex', '.claude', 'agents']);
 function files(dir = '') {
   return fs.readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap(entry => {
     if (excluded.has(entry.name) || entry.isSymbolicLink()) return [];
@@ -17,47 +17,55 @@ function files(dir = '') {
     return entry.isDirectory() ? files(file) : [file];
   });
 }
-const siteFiles = files();
+const siteFiles = files().filter(file => !file.startsWith('assets/img/'));
 const retiredWording = [['真', '贋'], ['出品', 'できません'], ['出せ', 'ません'], ['保証書・購入証明', 'がなく']].map(parts => parts.join(''));
 const htmlFiles = ['index.html'].concat(products.map(p => 'items/' + p.slug + '.html'));
-check('6 products, 4 distinct valid self-contained illustrations each', () => {
+function jpegDimensions(bytes) {
+  let offset = 2;
+  while (offset < bytes.length - 2) {
+    assert.strictEqual(bytes[offset++], 0xff, 'Expected JPEG marker');
+    while (bytes[offset] === 0xff) offset += 1;
+    const marker = bytes[offset++];
+    assert(marker !== 0xda && marker !== 0xd9, 'Missing JPEG SOF before image data');
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+    assert(offset + 2 <= bytes.length, 'Truncated JPEG segment');
+    const length = bytes.readUInt16BE(offset);
+    assert(length >= 2 && offset + length <= bytes.length, 'Invalid JPEG segment length');
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+      assert(length >= 8, 'Truncated JPEG SOF');
+      return { width: bytes.readUInt16BE(offset + 5), height: bytes.readUInt16BE(offset + 3) };
+    }
+    offset += length;
+  }
+  assert.fail('Missing JPEG SOF');
+}
+check('6 products, 24 referenced JPEG photos with valid dimensions and distinct bytes', () => {
   assert.strictEqual(products.length, 6);
   assert.strictEqual(new Set(products.map(p => p.slug)).size, 6);
   const allImages = [];
   for (const product of products) {
     assert.strictEqual(product.images.length, 4);
-    const artwork = [];
+    const photos = [];
     for (const image of product.images) {
       allImages.push(image.file);
-      const svg = read('assets/img/' + image.file).trim();
-      artwork.push(svg);
-      assert(svg.startsWith('<svg ') && svg.endsWith('</svg>'));
-      assert(svg.includes('viewBox="0 0 800 800"'));
-      assert(svg.includes('width="800" height="800"'));
-      assert(svg.includes('role="img"') && /<title\b[^>]*>[^<]+<\/title>/.test(svg));
-      assert(svg.includes(image.caption));
-      assert(Buffer.byteLength(svg, 'utf8') < 200 * 1024);
-      assert(!/<(?:text|script|image|foreignObject)\b/i.test(svg));
-      assert(/<linearGradient\b/.test(svg) && /<feGaussianBlur\b/.test(svg));
-      assert(!svg.includes('仮の画像'));
-      const withoutNamespace = svg.replace(/xmlns="[^"]+"/, '');
-      assert(!/(?:https?:)?\/\//i.test(withoutNamespace));
-      const ids = new Set(Array.from(svg.matchAll(/\bid="([^"]+)"/g), match => match[1]));
-      for (const match of svg.matchAll(/url\(#([^)]+)\)/g)) assert(ids.has(match[1]), 'Missing SVG paint/filter ' + match[1]);
-      // Check XML element balance, quotes, root structure and local paint references without a dependency.
-      const stack = [];
-      for (const match of svg.matchAll(/<([^>]+)>/g)) {
-        const tag = match[1];
-        if (tag[0] === '/' ) assert.strictEqual(stack.pop(), tag.slice(1).trim());
-        else if (!tag.endsWith('/')) stack.push(tag.split(/\s/)[0]);
-        assert.strictEqual((tag.match(/"/g) || []).length % 2, 0);
-      }
-      assert.deepStrictEqual(stack, []);
+      assert(image.file.endsWith('.jpg'));
+      const file = path.join(root, 'assets/img', image.file);
+      assert(fs.existsSync(file), 'Missing photo: ' + image.file);
+      const bytes = fs.readFileSync(file);
+      assert(bytes.length >= 30 * 1024 && bytes.length <= 400 * 1024, image.file + ': size');
+      assert(bytes.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff])));
+      assert(bytes.subarray(-2).equals(Buffer.from([0xff, 0xd9])));
+      const { width, height } = jpegDimensions(bytes);
+      assert(Math.max(width, height) >= 1000 && Math.max(width, height) <= 1200);
+      // Allow at most one pixel of rounding when resizing to an integer long edge.
+      assert(Math.abs(Math.max(width, height) * 3 / 4 - Math.min(width, height)) <= 1);
+      assert(width > height || product.slug === 'figure-large', image.file + ': unexpected portrait');
+      assert(photos.every(photo => !photo.equals(bytes)), image.file + ': duplicate photo');
+      photos.push(bytes);
     }
-    assert.strictEqual(new Set(artwork).size, 4);
   }
+  assert.strictEqual(allImages.length, 24);
   assert.strictEqual(new Set(allImages).size, 24);
-  assert.strictEqual(fs.readdirSync(path.join(root, 'assets/img')).filter(f => f.endsWith('.svg')).length, 24);
 });
 check('Committed-ready HTML exactly matches current data; rebuild is deterministic', () => {
   const before = htmlFiles.map(read);
@@ -89,7 +97,13 @@ check('All HTML has demo, robots, viewport, accessibility and existing relative 
       assert(target.startsWith(root + path.sep));
       assert(fs.existsSync(target), 'Missing resource: ' + target);
     }
-    for (const match of html.matchAll(/<img\b[^>]*>/g)) assert(/\balt="[^"]*"/.test(match[0]));
+    const images = Array.from(html.matchAll(/<img\b[^>]*>/g), match => match[0]);
+    images.forEach((img, i) => {
+      assert(/\balt="[^"]+"/.test(img));
+      assert(/\bwidth="[1-9][0-9]*"/.test(img) && /\bheight="[1-9][0-9]*"/.test(img));
+      assert(i === 0 ? img.includes('fetchpriority="high"') : img.includes('loading="lazy"'));
+      if (i > 0) assert(!img.includes('fetchpriority="high"'));
+    });
   }
   assert(read('_headers').includes('/*\n  X-Robots-Tag: noindex, nofollow'));
   assert.strictEqual(read('robots.txt').trim(), 'User-agent: *\nDisallow: /');
@@ -122,13 +136,13 @@ check('No retired notices in any page or source; listing eligibility does not af
   const builder = require('../scripts/build.js');
   for (const file of siteFiles) {
     const content = read(file);
+    if (/\.(?:html|js|md)$/.test(file)) assert(!content.includes(['ロ', 'ゴ'].join('')), 'Retired image wording in ' + file);
     retiredWording.forEach(word => assert(!content.includes(word), 'Retired wording in ' + file));
   }
   products.forEach((product, i) => {
     assert.strictEqual(builder.item({ ...product, listable: false }, i), builder.item({ ...product, listable: true }, i));
     if (product.slug === 'shoulder-bag') {
-      product.images.forEach(image => assert(!read('assets/img/' + image.file).includes('ロゴ')));
-      assert(!read('items/' + product.slug + '.html').includes('ロゴ'));
+      assert(!read('items/' + product.slug + '.html').includes(['ロ', 'ゴ'].join('')));
     }
   });
 });
@@ -142,7 +156,6 @@ check('Static source audit: no network APIs, external resources, real brands or 
     let content = read(file);
     APIs.forEach((api, i) => assert(!(new RegExp('\\b' + api + (i ? '\\b' : '\\s*\\('))).test(content), 'Network API in ' + file));
     forbidden.forEach(word => assert(!content.toLowerCase().includes(word.toLowerCase()), 'Forbidden wording in ' + file));
-    if (file.endsWith('.svg')) content = content.replace(/xmlns="[^"]+"/g, '');
     if (file === 'assets/js/config.js') content = content.replace(/appUrl:\s*'[^']+'/g, '');
     assert(!remote.test(content), 'Unexpected external address in ' + file);
     remote.lastIndex = 0;
@@ -245,20 +258,20 @@ check('Category filtering and reset preserve data order and report counts', () =
 check('Gallery click, arrow wrapping, Home/End, focus and live captions', () => {
   const b = browser();
   b.thumbs[2].fire('click');
-  assert.strictEqual(b.main.src, '../assets/img/holo-card-3.svg');
+  assert.strictEqual(b.main.src, '../assets/img/holo-card-3.jpg');
   assert.strictEqual(b.main.alt, products[0].images[2].caption);
   assert.strictEqual(b.caption.textContent, '3 / 4 ' + products[0].images[2].caption);
   assert.strictEqual(b.thumbs[2].getAttribute('aria-pressed'), 'true');
   let prevented = false;
   b.thumbs[0].fire('keydown', { key: 'ArrowLeft', preventDefault: () => { prevented = true; } });
   assert(prevented && b.thumbs[3].focused);
-  assert.strictEqual(b.main.src, '../assets/img/holo-card-4.svg');
+  assert.strictEqual(b.main.src, '../assets/img/holo-card-4.jpg');
   b.thumbs[3].fire('keydown', { key: 'ArrowRight', preventDefault() {} });
-  assert.strictEqual(b.main.src, '../assets/img/holo-card-1.svg');
+  assert.strictEqual(b.main.src, '../assets/img/holo-card-1.jpg');
   b.thumbs[0].fire('keydown', { key: 'End', preventDefault() {} });
-  assert.strictEqual(b.main.src, '../assets/img/holo-card-4.svg');
+  assert.strictEqual(b.main.src, '../assets/img/holo-card-4.jpg');
   b.thumbs[3].fire('keydown', { key: 'Home', preventDefault() {} });
-  assert.strictEqual(b.main.src, '../assets/img/holo-card-1.svg');
+  assert.strictEqual(b.main.src, '../assets/img/holo-card-1.jpg');
 });
 check('System theme, stored overrides, storage denial and demo purchase notice', () => {
   const b = browser({ dark: true, storageThrows: true });
